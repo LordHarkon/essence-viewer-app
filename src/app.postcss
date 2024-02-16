@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Montserrat Variable", sans-serif;
+}
+
+body,
+html {
+  @apply bg-zinc-950;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom Scroll */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-md bg-[#333333];
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#444444];
+}
+
+::-webkit-scrollbar-track:vertical {
+  @apply my-0.5;
+}
+
+::-webkit-scrollbar-track:horizontal {
+  @apply mx-0.5;
+}
+
+/* Corner */
+::-webkit-scrollbar-corner {
+  @apply bg-transparent;
+}
