@@ -6,7 +6,7 @@ export function delayedInput(node: HTMLInputElement, callback: () => void) {
     clearTimeout(timer);
 
     // Start a new timer
-    timer = setTimeout(callback, 500);
+    timer = setTimeout(callback, 300);
   }
 
   // Attach the event listener to the input element

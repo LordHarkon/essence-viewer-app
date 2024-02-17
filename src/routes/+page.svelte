@@ -7,12 +7,19 @@
   import Fuse from "fuse.js";
   import { delayedInput } from "$lib/delayedInput";
   import type { SvelteToastOptions } from "@zerodevx/svelte-toast/stores";
+  import InfiniteLoading from "svelte-infinite-loading";
 
   let searchString: string;
   let searchWithin: string;
   let shownEssences = essences;
 
-  const descriptionRegex = /(drinking|drank|consuming|consumed|taste)/;
+  let page = 1;
+  let size = 20;
+  let allShownEssences: typeof essences = [];
+
+  $: allShownEssences = shownEssences.slice(0, page * size);
+
+  const descriptionRegex = /(drinking|drank|consuming|consumed)/;
 
   const options: SvelteToastOptions = {
     duration: 2000,
@@ -21,6 +28,16 @@
       "--toastBarBackground": "rgb(63 63 70)",
     },
   };
+
+  function infiniteHandler({ detail: { loaded, complete } }) {
+    if (allShownEssences.length !== shownEssences.length) {
+      allShownEssences = shownEssences.slice(0, (page + 1) * size);
+      page++;
+      loaded();
+    } else {
+      complete();
+    }
+  }
 
   function search() {
     if (!searchString) {
@@ -71,7 +88,7 @@
 >
   {shownEssences.length}
 </div>
-<div class="py-2 px-4 flex">
+<div class="pt-2 px-6 flex">
   <div class="pl-2 py-1 bg-zinc-900 border border-r-0 border-white/10">
     <Search />
   </div>
@@ -93,9 +110,9 @@
   </select>
 </div>
 
-<div class="flex flex-wrap p-4 gap-4 justify-between overflow-x-hidden">
-  {#each shownEssences as essence (essence.index)}
-    <div class="min-w-[256px] max-w-[344px] border border-white/10 p-2">
+<div class="flex flex-wrap p-4 justify-between overflow-x-hidden">
+  {#each allShownEssences as essence (essence.index)}
+    <div class="flex-1 min-w-[256px] max-w-[344px] border border-white/10 p-2 max-h-[512px] relative flex flex-col m-2">
       <div class="flex justify-between">
         <span class="font-bold text-purple-400">{essence.name}</span>
         <Copy
@@ -106,13 +123,12 @@
       {#if descriptionRegex.test(essence.description[0].toLowerCase())}
         <i class="text-purple-200">{essence.description[0]}</i>
       {/if}
-      <div class="border border-white/20 p-2">
-        <ul class="list-disc pl-5 max-h-96 overflow-y-auto rounded pr-2 pb-2">
-          {#each essence.description.filter((_, i) => !(i === 0 && descriptionRegex.test(essence.description[i].toLowerCase()))) as desc}
-            <li class="text-purple-100 break-words">{desc}</li>
-          {/each}
-        </ul>
-      </div>
+      <ul class="border border-white/20 pt-2 list-disc pl-7 flex-grow overflow-y-auto">
+        {#each essence.description.filter((_, i) => !(i === 0 && descriptionRegex.test(essence.description[i].toLowerCase()))) as desc}
+          <li class="text-purple-100 break-words">{desc}</li>
+        {/each}
+      </ul>
     </div>
   {/each}
 </div>
+<InfiniteLoading on:infinite={infiniteHandler} />
