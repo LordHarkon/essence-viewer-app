@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Search now runs again when changing the mode.
 - Loading times are now way faster thanks to infinite scrolling
+- Design of each essence has been changed so that the description list takes the remaining space instead of being a specified height.
 
 [1.0.0] - 2024-02-17
 This is the initial version of the project, with simple fuzzy search.
